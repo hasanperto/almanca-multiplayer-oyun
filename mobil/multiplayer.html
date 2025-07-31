@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#4a90e2" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Almanca Multiplayer" />
+  
+  <title>Almanca Multiplayer Oyunu</title>
+  <meta name="description" content="Arkadaşlarınızla Almanca öğrenin! Gerçek zamanlı multiplayer oyun." />
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="./manifest.json" />
+  
+  <!-- Icons -->
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="style-multiplayer.css" />
+  
+  <!-- Socket.IO -->
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+</head>
+<body>
+
+  <!-- Giriş Ekranı -->
+  <div id="loginScreen" class="screen">
+    <div class="container">
+      <div class="header-section">
+        <h1 class="game-title">🌐 Almanca Multiplayer</h1>
+        <p class="game-subtitle">Arkadaşlarınızla gerçek zamanlı oyun oynayın!</p>
+      </div>
+      
+      <div class="login-form">
+        <div class="input-group">
+          <label for="playerName">👤 Oyuncu Adınız:</label>
+          <input type="text" id="playerName" placeholder="Adınızı girin" maxlength="20">
+        </div>
+        <button id="loginBtn" class="primary-btn">🚀 Oyuna Gir</button>
+      </div>
+      
+      <div class="connection-status" id="connectionStatus">
+        🔴 Sunucuya bağlanıyor...
+      </div>
+    </div>
+  </div>
+
+  <!-- Lobby Listesi Ekranı -->
+  <div id="lobbyListScreen" class="screen" style="display: none;">
+    <div class="container">
+      <div class="header-section">
+        <h1 class="game-title">🏛️ Oyun Odaları</h1>
+        <p class="game-subtitle">Bir odaya katılın veya yeni oda oluşturun</p>
+        <div class="player-info">
+          <span id="currentPlayerName">Oyuncu</span>
+          <button id="logoutBtn" class="logout-btn">🚪 Çıkış</button>
+        </div>
+      </div>
+      
+      <div class="lobby-controls">
+        <button id="createLobbyBtn" class="primary-btn">➕ Yeni Oda Oluştur</button>
+        <button id="refreshBtn" class="secondary-btn">🔄 Yenile</button>
+      </div>
+      
+      <div class="lobbies-container">
+        <div id="lobbiesList" class="lobbies-list">
+          <!-- Lobby'ler dinamik olarak yüklenecek -->
+        </div>
+        
+        <div id="noLobbies" class="no-lobbies">
+          <p>🏠 Henüz aktif oda bulunmuyor</p>
+          <p>İlk odayı siz oluşturun!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lobby Oluşturma Modal -->
+  <div id="createLobbyModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🆕 Yeni Oda Oluştur</h2>
+        <button id="closeCreateModal" class="close-btn">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="setting-group">
+          <label>👥 Maksimum Oyuncu:</label>
+          <select id="maxPlayersSelect">
+            <option value="2">2 Oyuncu</option>
+            <option value="3">3 Oyuncu</option>
+            <option value="4" selected>4 Oyuncu</option>
+          </select>
+        </div>
+        
+        <div class="setting-group">
+          <label>🎯 Soru Sayısı:</label>
+          <select id="questionCountSelect">
+            <option value="5">5 Soru (Hızlı)</option>
+            <option value="10" selected>10 Soru</option>
+            <option value="15">15 Soru</option>
+            <option value="20">20 Soru</option>
+          </select>
+        </div>
+        
+        <div class="setting-group">
+          <label>⏱️ Zaman Sınırı:</label>
+          <select id="timeLimitSelect">
+            <option value="10">10 saniye</option>
+            <option value="15" selected>15 saniye</option>
+            <option value="20">20 saniye</option>
+            <option value="30">30 saniye</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button id="confirmCreateBtn" class="primary-btn">✨ Oda Oluştur</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lobby Ekranı -->
+  <div id="lobbyScreen" class="screen" style="display: none;">
+    <div class="container">
+      <div class="lobby-header">
+        <div class="lobby-info">
+          <h1 class="lobby-title">🏛️ Oyun Odası</h1>
+          <div class="lobby-id">Oda ID: <span id="currentLobbyId">-</span></div>
+        </div>
+        <button id="leaveLobbyBtn" class="danger-btn">🚪 Odadan Ayrıl</button>
+      </div>
+      
+      <div class="game-settings" id="gameSettings">
+        <h3>⚙️ Oyun Ayarları</h3>
+        <div class="settings-grid">
+          <div class="setting-item">
+            <span class="setting-label">👥 Oyuncu:</span>
+            <span id="lobbyPlayerCount">0/4</span>
+          </div>
+          <div class="setting-item">
+            <span class="setting-label">🎯 Soru:</span>
+            <span id="lobbyQuestionCount">10</span>
+          </div>
+          <div class="setting-item">
+            <span class="setting-label">⏱️ Zaman:</span>
+            <span id="lobbyTimeLimit">15s</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="players-container">
+        <h3>👥 Oyuncular</h3>
+        <div id="playersGrid" class="players-grid">
+          <!-- Oyuncular dinamik olarak eklenecek -->
+        </div>
+      </div>
+      
+      <div class="lobby-actions">
+        <button id="readyBtn" class="ready-btn">✋ Hazır Değilim</button>
+        <div id="gameCountdown" class="countdown" style="display: none;">
+          <div class="countdown-number">3</div>
+          <div class="countdown-text">Oyun başlıyor...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Oyun Ekranı -->
+  <div id="gameScreen" class="screen" style="display: none;">
+    <div class="container">
+      <div class="game-header">
+        <div class="game-progress">
+          <span id="questionProgress">Soru 1/10</span>
+        </div>
+        <div class="game-scores" id="gameScores">
+          <!-- Skorlar dinamik olarak eklenecek -->
+        </div>
+      </div>
+      
+      <div class="question-container">
+        <div class="question-box">
+          <div class="turkish-word">
+            <span class="label">Türkçe:</span>
+            <span id="turkishWord" class="word">-</span>
+          </div>
+          <div class="timer-display">
+            <span id="timeLeft">15</span>
+            <span class="timer-unit">saniye</span>
+          </div>
+        </div>
+        
+        <div class="turn-info" id="turnInfo">
+          <span class="current-player">Oyuncu</span> sıra sende!
+        </div>
+        
+        <div class="answers-grid" id="answersGrid">
+          <button class="answer-option" data-answer="">A</button>
+          <button class="answer-option" data-answer="">B</button>
+          <button class="answer-option" data-answer="">C</button>
+          <button class="answer-option" data-answer="">D</button>
+        </div>
+        
+        <div id="waitingMessage" class="waiting-message" style="display: none;">
+          ⏳ Diğer oyuncuların cevapları bekleniyor...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Soru Sonucu Ekranı -->
+  <div id="resultsScreen" class="screen" style="display: none;">
+    <div class="container">
+      <div class="results-header">
+        <h2>📊 Soru Sonucu</h2>
+        <div id="correctAnswer" class="correct-answer">
+          Doğru cevap: <span>-</span>
+        </div>
+      </div>
+      
+      <div id="playerResults" class="player-results">
+        <!-- Oyuncu sonuçları dinamik olarak eklenecek -->
+      </div>
+      
+      <div class="next-question-timer">
+        <div id="nextQuestionCountdown">3</div>
+        <div>saniye sonra sonraki soru</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Oyun Sonu Ekranı -->
+  <div id="gameEndScreen" class="screen" style="display: none;">
+    <div class="container">
+      <div class="game-end-header">
+        <h1>🏆 Oyun Bitti!</h1>
+        <div id="gameWinner" class="winner-info">
+          Kazanan: <span>-</span>
+        </div>
+      </div>
+      
+      <div id="finalScores" class="final-scores">
+        <!-- Final skorları dinamik olarak eklenecek -->
+      </div>
+      
+      <div class="game-end-actions">
+        <button id="playAgainBtn" class="primary-btn">🔄 Tekrar Oyna</button>
+        <button id="backToLobbiesBtn" class="secondary-btn">🏠 Ana Menü</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Mesajları -->
+  <div id="toast" class="toast">
+    <span id="toastMessage">Mesaj</span>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="multiplayer.js?v=2.3"></script>
+</body>
+</html> 

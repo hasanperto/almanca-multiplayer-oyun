@@ -1,0 +1,39 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a90e2"/>
+      <stop offset="100%" style="stop-color:#667eea"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="512" height="512" rx="64" fill="url(#bg512)"/>
+  
+  <!-- Card Base -->
+  <rect x="86" y="128" width="340" height="256" rx="32" fill="white" opacity="0.95"/>
+  
+  <!-- German Flag Colors -->
+  <rect x="106" y="148" width="300" height="20" fill="#000000"/>
+  <rect x="106" y="168" width="300" height="20" fill="#DD0000"/>
+  <rect x="106" y="188" width="300" height="20" fill="#FFCE00"/>
+  
+  <!-- Text -->
+  <text x="256" y="250" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="#333">DE</text>
+  <text x="256" y="290" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#666">Verb</text>
+  <text x="256" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#666">Game</text>
+  <text x="256" y="350" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#999">Mobile</text>
+  
+  <!-- Game Icons -->
+  <circle cx="160" cy="420" r="20" fill="#ff6b6b"/>
+  <circle cx="256" cy="420" r="20" fill="#4ecdc4"/>
+  <circle cx="352" cy="420" r="20" fill="#45b7d1"/>
+  
+  <!-- Star decoration -->
+  <polygon points="256,40 264,64 288,64 270,80 278,104 256,88 234,104 242,80 224,64 248,64" fill="#FFD700"/>
+  
+  <!-- Additional decorative elements -->
+  <circle cx="128" cy="96" r="12" fill="#FFD700" opacity="0.7"/>
+  <circle cx="384" cy="96" r="12" fill="#FFD700" opacity="0.7"/>
+  <circle cx="128" cy="480" r="12" fill="#FFD700" opacity="0.7"/>
+  <circle cx="384" cy="480" r="12" fill="#FFD700" opacity="0.7"/>
+</svg> 

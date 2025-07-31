@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#4a90e2" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Almanca Oyun" />
+  
+  <title>Almanca Fiil Kart Oyunu</title>
+  <meta name="description" content="Türkçe fiillerin Almanca karşılıklarını öğrenin! Eğlenceli kart oyunu." />
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="./manifest.json" />
+  
+  <!-- Icons -->
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
+  
+  <!-- PWA Install Banner Styles -->
+  <style>
+    .install-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(135deg, #4a90e2, #357abd);
+      color: white;
+      padding: 15px;
+      text-align: center;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      z-index: 10000;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+    }
+    
+    .install-banner.show {
+      transform: translateY(0);
+    }
+    
+    .install-banner button {
+      background: white;
+      color: #4a90e2;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      margin: 0 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .install-banner button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255,255,255,0.3);
+    }
+    
+    .offline-indicator {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: #ff6b6b;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: none;
+      z-index: 10001;
+      animation: pulse 2s infinite;
+    }
+    
+    .offline-indicator.online {
+      background: #28a745;
+    }
+    
+    .mode-selection {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+    
+    .mode-card {
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: white;
+      text-decoration: none;
+    }
+    
+    .mode-card:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+    
+    .mode-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      display: block;
+    }
+    
+    .mode-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    .mode-description {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      line-height: 1.4;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+    
+    @media (max-width: 480px) {
+      .mode-selection {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      
+      .mode-icon {
+        font-size: 2.5rem;
+      }
+      
+      .mode-title {
+        font-size: 1.1rem;
+      }
+      
+      .mode-description {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PWA Install Banner -->
+  <div id="installBanner" class="install-banner">
+    <div>📱 <strong>Uygulamayı Ana Ekrana Ekle</strong></div>
+    <div style="margin-top: 8px;">
+      <button id="installBtn">📲 Yükle</button>
+      <button id="dismissBtn">❌ Kapat</button>
+    </div>
+  </div>
+
+  <!-- Offline Indicator -->
+  <div id="offlineIndicator" class="offline-indicator">
+    🔴 Çevrimdışı
+  </div>
+
+  <!-- Ana Menü Ekranı -->
+  <div id="mainMenuScreen" class="settings-screen">
+    <div class="settings-container">
+      <div class="header-section">
+        <h1 class="game-title">🎮 Almanca Fiil Kart Oyunu</h1>
+        <p class="game-subtitle">Türkçe fiillerin Almanca karşılıklarını öğrenin!</p>
+        <div id="versionInfo" style="font-size: 0.8rem; color: #999; margin-top: 5px;">
+          📱 Mobil PWA v2.0.0 - Multiplayer
+        </div>
+      </div>
+      
+      <div class="help-section">
+        <button id="helpBtn" class="help-btn">❓ Nasıl Oynanır?</button>
+        <button id="scoresBtn" class="scores-btn">🏆 En Yüksek Skorlar</button>
+      </div>
+      
+      <div class="mode-selection">
+        <div class="mode-card" onclick="startSinglePlayer()">
+          <span class="mode-icon">👤</span>
+          <div class="mode-title">Tek Oyuncu</div>
+          <div class="mode-description">
+            Klasik mod<br>
+            Bilgisayara karşı oyna<br>
+            İnternet gerektirmez
+          </div>
+        </div>
+        
+        <div class="mode-card" onclick="startMultiplayer()">
+          <span class="mode-icon">👥</span>
+          <div class="mode-title">Çok Oyuncu</div>
+          <div class="mode-description">
+            Arkadaşlarınla oyna<br>
+            Gerçek zamanlı multiplayer<br>
+            4 kişiye kadar
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ayar Ekranı (Tek oyuncu için) -->
+  <div id="settingsScreen" class="settings-screen" style="display: none;">
+    <div class="settings-container">
+      <div class="header-section">
+        <h1 class="game-title">⚙️ Oyun Ayarları</h1>
+        <p class="game-subtitle">Tek oyuncu modunu özelleştirin</p>
+        <button id="backToMainBtn" class="help-btn" style="margin-top: 10px;">🏠 Ana Menü</button>
+      </div>
+      
+      <div class="settings-grid">
+        <div class="setting-group">
+          <label>👥 Oyuncu Sayısı:</label>
+          <select id="playerCount">
+            <option value="1" selected>1 Oyuncu</option>
+            <option value="2">2 Oyuncu</option>
+            <option value="3">3 Oyuncu</option>
+            <option value="4">4 Oyuncu</option>
+          </select>
+        </div>
+
+        <div class="player-names">
+          <div class="player-input">
+            <label>Oyuncu 1:</label>
+            <input type="text" id="player1" value="Oyuncu" placeholder="İsim girin">
+          </div>
+          <div class="player-input">
+            <label>Oyuncu 2:</label>
+            <input type="text" id="player2" value="Meryem" placeholder="İsim girin">
+          </div>
+          <div class="player-input">
+            <label>Oyuncu 3:</label>
+            <input type="text" id="player3" value="Ali" placeholder="İsim girin">
+          </div>
+          <div class="player-input">
+            <label>Oyuncu 4:</label>
+            <input type="text" id="player4" value="Efe" placeholder="İsim girin">
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <label>🎯 Soru Sayısı:</label>
+          <select id="questionCount">
+            <option value="10">10 Soru</option>
+            <option value="20">20 Soru</option>
+            <option value="50">50 Soru</option>
+            <option value="100">100 Soru</option>
+            <option value="0">Sınırsız</option>
+          </select>
+        </div>
+
+        <div class="setting-group">
+          <label>⏱️ Zaman Sınırı:</label>
+          <select id="timeSelect">
+            <option value="10">10 saniye</option>
+            <option value="15" selected>15 saniye</option>
+            <option value="20">20 saniye</option>
+            <option value="30">30 saniye</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="startGameBtn" class="start-btn">🎮 Oyunu Başlat</button>
+    </div>
+  </div>
+
+  <!-- Yardım Modalı -->
+  <div id="helpModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>❓ Nasıl Oynanır?</h2>
+        <button id="closeHelpBtn" class="close-btn">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="help-section">
+          <h3>🎯 Oyun Amacı</h3>
+          <p>Türkçe fiillerin Almanca karşılıklarını doğru tahmin ederek en yüksek skoru elde edin!</p>
+        </div>
+
+        <div class="help-section">
+          <h3>🎮 Oyun Modları</h3>
+          <ul>
+            <li><strong>Tek Oyuncu:</strong> Bilgisayara karşı veya arkadaşlarınızla yerel oyun</li>
+            <li><strong>Çok Oyuncu:</strong> İnternet üzerinden arkadaşlarınızla gerçek zamanlı oyun</li>
+            <li><strong>Sıra Tabanlı:</strong> Oyuncular sırayla cevap verir</li>
+            <li><strong>Zaman Sınırı:</strong> Her oyuncunun belirlenen süresi vardır</li>
+          </ul>
+        </div>
+
+        <div class="help-section">
+          <h3>🌐 Multiplayer Özellikler</h3>
+          <ul>
+            <li><strong>Lobby Sistemi:</strong> Oda oluştur ve arkadaşlarını davet et</li>
+            <li><strong>Gerçek Zamanlı:</strong> Cevaplar anında senkronize olur</li>
+            <li><strong>4 Kişiye Kadar:</strong> Daha çok arkadaşla oyna</li>
+            <li><strong>Hazır Sistemi:</strong> Herkes hazır olunca oyun başlar</li>
+          </ul>
+        </div>
+
+        <div class="help-section">
+          <h3>🎨 Oyun Özellikleri</h3>
+          <ul>
+            <li><strong>Karışık Sorular:</strong> Sorular rastgele sırayla gelir</li>
+            <li><strong>Karışık Seçenekler:</strong> Doğru cevap her seferinde farklı yerde</li>
+            <li><strong>Responsive Tasarım:</strong> Mobil ve masaüstü uyumlu</li>
+            <li><strong>Offline Çalışma:</strong> Tek oyuncu modu internet olmadan da oynanabilir</li>
+            <li><strong>PWA Özelliği:</strong> Ana ekrana ekleyebilirsiniz</li>
+          </ul>
+        </div>
+
+        <div class="help-section">
+          <h3>⚡ Kontroller</h3>
+          <ul>
+            <li><strong>Duraklat:</strong> Oyunu duraklatmak için ⏸️ butonuna tıklayın</li>
+            <li><strong>Yeniden Başlat:</strong> Oyunu yeniden başlatmak için 🔄 butonuna tıklayın</li>
+            <li><strong>Ayarlara Dön:</strong> Ayarları değiştirmek için ⚙️ butonuna tıklayın</li>
+          </ul>
+        </div>
+
+        <div class="help-section">
+          <h3>🏆 İpuçları</h3>
+          <ul>
+            <li>Almanca fiilleri düzenli olarak tekrar edin</li>
+            <li>Zaman sınırına dikkat edin</li>
+            <li>Yanlış cevaplardan da öğrenin</li>
+            <li>Arkadaşlarınızla yarışın</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button id="startGameFromHelpBtn" class="start-btn">🎮 Hemen Başla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skor Tablosu Modalı -->
+  <div id="scoresModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🏆 En Yüksek Skorlar</h2>
+        <button id="closeScoresBtn" class="close-btn">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div id="scoresContent">
+          <!-- Skorlar dinamik olarak yüklenecek -->
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button id="clearScoresBtn" class="help-btn" style="margin-right: 10px;">🗑️ Skorları Temizle</button>
+        <button id="startGameFromScoresBtn" class="start-btn">🎮 Oyunu Başlat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Oyun Ekranı -->
+  <div id="gameScreen" class="game-screen" style="display: none;">
+    <div class="header">
+      <div class="settings">
+        <button id="restartBtn">🔄 Yeniden Başla</button>
+        <button id="pauseBtn">⏸️ Duraklat</button>
+        <button id="backToSettingsBtn">⚙️ Ayarlar</button>
+      </div>
+
+      <div class="skorlar" id="scoreContainer">
+        <!-- Skorlar dinamik olarak eklenecek -->
+      </div>
+    </div>
+
+    <div class="game-area">
+      <div class="question-box">
+        <div id="turkishVerb" class="verb">Türkçe Fiil: <span id="turkish">-</span></div>
+        <div class="timer">Kalan süre: <span id="time">-</span> sn</div>
+      </div>
+
+      <div class="turn-info" id="turnInfo">- sıra sende, doğru Almanca fiili seç!</div>
+
+      <div class="answers">
+        <button class="answer-card" data-letter="a">A</button>
+        <button class="answer-card" data-letter="b">B</button>
+        <button class="answer-card" data-letter="c">C</button>
+        <button class="answer-card" data-letter="d">D</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Oyun Sonu Ekranı -->
+  <div id="gameOverScreen" class="game-over-screen" style="display: none;">
+    <div class="game-over-container">
+      <h2>🏆 Oyun Bitti!</h2>
+      <div id="winnerInfo"></div>
+      <div id="finalScores"></div>
+      <div class="game-over-buttons">
+        <button id="playAgainBtn">🔄 Yeniden Oyna</button>
+        <button id="saveScoreBtn">💾 Skoru Kaydet</button>
+        <button id="viewScoresBtn">📊 Skorları Gör</button>
+        <button id="backToMenuBtn">🏠 Ana Menü</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    function startSinglePlayer() {
+      document.getElementById('mainMenuScreen').style.display = 'none';
+      document.getElementById('settingsScreen').style.display = 'block';
+    }
+
+    function startMultiplayer() {
+      window.location.href = 'multiplayer.html';
+    }
+
+    document.getElementById('backToMainBtn').addEventListener('click', function() {
+      document.getElementById('settingsScreen').style.display = 'none';
+      document.getElementById('mainMenuScreen').style.display = 'block';
+    });
+
+    document.getElementById('backToMenuBtn').addEventListener('click', function() {
+      document.getElementById('gameOverScreen').style.display = 'none';
+      document.getElementById('gameScreen').style.display = 'none';
+      document.getElementById('settingsScreen').style.display = 'none';
+      document.getElementById('mainMenuScreen').style.display = 'block';
+    });
+  </script>
+  <script src="script.js"></script>
+</body>
+</html> 

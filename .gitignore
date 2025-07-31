@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+
+# Build output
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Railway specific
+.railway/
+
+# Backup folders
+backup_*/
+de_v3_*/
+
+# Archive files
+*.zip
+*.rar
+
+# Database files
+*.db
+*.sqlite
+
+# PHP files (not needed for Node.js deploy)
+*.php
+database_setup.sql 

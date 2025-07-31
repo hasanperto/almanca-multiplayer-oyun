@@ -1,0 +1,32 @@
+<svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a90e2"/>
+      <stop offset="100%" style="stop-color:#667eea"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="192" height="192" rx="24" fill="url(#bg)"/>
+  
+  <!-- Card Base -->
+  <rect x="32" y="48" width="128" height="96" rx="12" fill="white" opacity="0.95"/>
+  
+  <!-- German Flag Colors -->
+  <rect x="40" y="56" width="112" height="8" fill="#000000"/>
+  <rect x="40" y="64" width="112" height="8" fill="#DD0000"/>
+  <rect x="40" y="72" width="112" height="8" fill="#FFCE00"/>
+  
+  <!-- Text -->
+  <text x="96" y="100" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">DE</text>
+  <text x="96" y="116" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#666">Verb</text>
+  <text x="96" y="130" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#666">Game</text>
+  
+  <!-- Game Icons -->
+  <circle cx="60" cy="160" r="8" fill="#ff6b6b"/>
+  <circle cx="96" cy="160" r="8" fill="#4ecdc4"/>
+  <circle cx="132" cy="160" r="8" fill="#45b7d1"/>
+  
+  <!-- Star decoration -->
+  <polygon points="96,20 99,29 108,29 101,35 104,44 96,38 88,44 91,35 84,29 93,29" fill="#FFD700"/>
+</svg> 
