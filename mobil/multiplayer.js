@@ -164,7 +164,8 @@ class MultiplayerGame {
   }
 
   connectToServer() {
-    this.socket = io();
+    // Railway production server
+    this.socket = io('https://almanca-multiplayer-oyun-production.up.railway.app');
 
     this.socket.on('connect', () => {
       console.log('Sunucuya bağlandı');
